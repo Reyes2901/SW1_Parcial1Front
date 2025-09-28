@@ -8,6 +8,11 @@ import ProfilePage from "../pages/ProfilePage";
 import ProjectsPage from "../pages/ProjectsPage";
 import PrivateRoute from "./PrivateRoute";
 import PublicRoute from "./PublicRoute";
+import ProjectForm from "../pages/ProjectForm";
+import ProjectDetailPage from "../pages/ProjectDetailPage";
+import DiagramDetailPage from "../pages/DiagramDetailPage";
+import DiagramPage from "../pages/DiagramPage";
+import DiagramCreatePage from "../pages/DiagramCreatePage";
 
 const AppRoutes: React.FC = () => {
   return (
@@ -16,28 +21,98 @@ const AppRoutes: React.FC = () => {
         {/* Rutas públicas */}
         <Route
           path="/login"
-          element={<PublicRoute><LoginPage /></PublicRoute>}
+          element={
+            <PublicRoute>
+              <LoginPage />
+            </PublicRoute>
+          }
         />
         <Route
           path="/register"
-          element={<PublicRoute><RegisterPage /></PublicRoute>}
+          element={
+            <PublicRoute>
+              <RegisterPage />
+            </PublicRoute>
+          }
         />
 
         {/* Rutas privadas */}
         <Route
-          path="/projects"
-          element={<PrivateRoute><ProjectsPage /></PrivateRoute>}
-        />
-        <Route
           path="/dashboard"
-          element={<PrivateRoute><Dashboard /></PrivateRoute>}
+          element={
+            <PrivateRoute>
+              <Dashboard />
+            </PrivateRoute>
+          }
         />
         <Route
           path="/profile"
-          element={<PrivateRoute><ProfilePage /></PrivateRoute>}
+          element={
+            <PrivateRoute>
+              <ProfilePage />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/projects"
+          element={
+            <PrivateRoute>
+              <ProjectsPage />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/projects/new"
+          element={
+            <PrivateRoute>
+              <ProjectForm />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/projects/:id"
+          element={
+            <PrivateRoute>
+              <ProjectDetailPage />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/projects/:id/edit"
+          element={
+            <PrivateRoute>
+              <ProjectForm />
+            </PrivateRoute>
+          }
         />
 
-        {/* Default */}
+        {/* Diagrams dentro de proyectos */}
+        <Route
+          path="/projects/:projectId/diagrams"
+          element={
+            <PrivateRoute>
+              <DiagramPage />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/projects/:projectId/diagrams/create"
+          element={
+            <PrivateRoute>
+              <DiagramCreatePage />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/projects/:projectId/diagrams/:diagramId"
+          element={
+            <PrivateRoute>
+              <DiagramDetailPage />
+            </PrivateRoute>
+          }
+        />
+
+        {/* Ruta por defecto */}
         <Route path="*" element={<Navigate to="/dashboard" replace />} />
       </Routes>
     </Router>
