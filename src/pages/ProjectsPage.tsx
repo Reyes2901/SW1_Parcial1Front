@@ -20,8 +20,10 @@ const ProjectsPage: React.FC = () => {
 
         if (!mounted) return;
 
-        // Filtrar duplicados por ID para evitar errores de React con keys
-        const uniqueProjects = Array.from(new Map(data.map(p => [p.id, p])).values());
+        // Eliminar duplicados por ID
+        const uniqueProjects = Array.from(
+          new Map(data.map((p) => [p.id, p])).values()
+        );
 
         setProjects(uniqueProjects);
       } catch (err: any) {
@@ -39,7 +41,6 @@ const ProjectsPage: React.FC = () => {
     };
 
     fetchProjects();
-
     return () => {
       mounted = false;
     };
@@ -50,51 +51,78 @@ const ProjectsPage: React.FC = () => {
 
     try {
       await deleteProject(id);
-      setProjects(prev => prev.filter(p => p.id !== id));
+      setProjects((prev) => prev.filter((p) => p.id !== id));
     } catch (err: any) {
       console.error("Delete error:", err);
       alert(err?.response?.data?.detail || "Error eliminando proyecto");
     }
   };
 
-  if (loading) return <p>Cargando proyectos...</p>;
-  if (error) return <p style={{ color: "red" }}>{error}</p>;
+  if (loading)
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <p className="text-gray-600">Cargando proyectos...</p>
+      </div>
+    );
+
+  if (error)
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <p className="text-red-600">{error}</p>
+      </div>
+    );
 
   return (
-    <div style={{ padding: 16 }}>
-      <h2>Proyectos</h2>
-      <div style={{ marginBottom: 12 }}>
-        <button onClick={() => navigate("/projects/new")}>Crear proyecto</button>
-      </div>
+    <div className="min-h-screen bg-gray-50 py-10 px-4">
+      <div className="max-w-4xl mx-auto bg-white p-8 rounded-lg shadow-md">
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-2xl font-bold">Mis Proyectos</h2>
+          <button
+            onClick={() => navigate("/projects/new")}
+            className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition"
+          >
+            + Crear proyecto
+          </button>
+        </div>
 
-      {projects.length === 0 ? (
-        <p>No tienes proyectos aún.</p>
-      ) : (
-        <ul>
-          {projects.map(p => (
-            <li key={p.id} style={{ marginBottom: 8 }}>
-              <strong>{p.name}</strong>
-              <div>
-                <button onClick={() => navigate(`/projects/${p.id}`)}>Ver</button>
-                <button
-                  onClick={() => navigate(`/projects/${p.id}/edit`)}
-                  style={{ marginLeft: 8 }}
-                >
-                  Editar
-                </button>
-                <button
-                  onClick={() => handleDelete(p.id)}
-                  style={{ marginLeft: 8 }}
-                >
-                  Eliminar
-                </button>
+        {projects.length === 0 ? (
+          <p className="text-gray-600">No tienes proyectos aún.</p>
+        ) : (
+          <div className="grid gap-4 md:grid-cols-2">
+            {projects.map((p) => (
+              <div
+                key={p.id}
+                className="p-4 border rounded-lg shadow-sm bg-gray-50"
+              >
+                <h3 className="text-lg font-semibold mb-2">{p.name}</h3>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => navigate(`/projects/${p.id}`)}
+                    className="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
+                  >
+                    Ver
+                  </button>
+                  <button
+                    onClick={() => navigate(`/projects/${p.id}/edit`)}
+                    className="px-3 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600 transition"
+                  >
+                    Editar
+                  </button>
+                  <button
+                    onClick={() => handleDelete(p.id)}
+                    className="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700 transition"
+                  >
+                    Eliminar
+                  </button>
+                </div>
               </div>
-            </li>
-          ))}
-        </ul>
-      )}
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 };
 
 export default ProjectsPage;
+

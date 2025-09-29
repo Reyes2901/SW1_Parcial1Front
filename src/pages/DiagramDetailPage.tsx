@@ -1,4 +1,4 @@
-// src/pages/DiagramDetailPage.tsx
+//src/pages/DiagramDetailPage.tsx
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import {
@@ -47,7 +47,7 @@ const DiagramDetailPage: React.FC = () => {
   }, [diagramId]);
 
   // -------------------
-  // Actualizar nombre del diagrama (PATCH)
+  // Actualizar nombre
   const handleUpdateName = async () => {
     if (!diagram) return;
     try {
@@ -61,13 +61,12 @@ const DiagramDetailPage: React.FC = () => {
   };
 
   // -------------------
-  // Actualizar contenido del diagrama (PUT)
+  // Actualizar contenido
   const handleUpdateContent = async () => {
     if (!diagram) return;
     try {
       const parsedContent = JSON.parse(editingContent);
       await updateDiagramContent(diagram.id, parsedContent, diagram.updated_at);
-      // Recargar diagrama
       const refreshed = await getDiagram(diagram.id);
       setDiagram(refreshed);
       setEditingContent(JSON.stringify(refreshed.content, null, 2));
@@ -83,72 +82,110 @@ const DiagramDetailPage: React.FC = () => {
   };
 
   // -------------------
-  // Eliminar diagrama (DELETE)
+  // Eliminar
   const handleDelete = async () => {
     if (!diagram) return;
     if (!window.confirm("¿Seguro que quieres eliminar este diagrama?")) return;
     try {
       await deleteDiagram(diagram.id);
       alert("Diagrama eliminado");
-      navigate(`/projects/${diagram.project}`); // Redirigir al proyecto
+      navigate(`/projects/${diagram.project}`);
     } catch (err) {
       console.error(err);
       alert("Error al eliminar diagrama");
     }
   };
 
-  if (loading) return <p>Cargando diagrama...</p>;
-  if (error) return <p>{error}</p>;
-  if (!diagram) return <p>No se encontró el diagrama.</p>;
+  if (loading)
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <p className="text-gray-600">Cargando diagrama...</p>
+      </div>
+    );
+
+  if (error)
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <p className="text-red-600">{error}</p>
+      </div>
+    );
+
+  if (!diagram)
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <p className="text-gray-600">No se encontró el diagrama.</p>
+      </div>
+    );
 
   return (
-    <div style={{ padding: "1rem" }}>
-      <h2>Diagrama: {diagram.name}</h2>
-      <p><strong>Proyecto padre:</strong> {diagram.project}</p>
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
+      <div className="w-full max-w-4xl bg-white rounded-lg shadow-md p-8 space-y-6">
+        <h2 className="text-2xl font-bold">Diagrama: {diagram.name}</h2>
+        <p className="text-gray-600">
+          <strong>Proyecto padre:</strong> {diagram.project}
+        </p>
 
-      {/* Formulario para actualizar nombre */}
-      <div style={{ marginBottom: "1rem" }}>
-        <input
-          type="text"
-          value={editingName}
-          onChange={(e) => setEditingName(e.target.value)}
-        />
-        <button onClick={handleUpdateName} style={{ marginLeft: "0.5rem" }}>
-          Actualizar nombre
+        {/* Actualizar nombre */}
+        <div className="space-y-2">
+          <label className="block text-sm font-medium text-gray-700">
+            Nombre
+          </label>
+          <div className="flex space-x-2">
+            <input
+              type="text"
+              value={editingName}
+              onChange={(e) => setEditingName(e.target.value)}
+              className="flex-1 border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"
+            />
+            <button
+              onClick={handleUpdateName}
+              className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition"
+            >
+              Guardar
+            </button>
+          </div>
+        </div>
+
+        {/* Editor de contenido */}
+        <div className="space-y-2">
+          <label className="block text-sm font-medium text-gray-700">
+            Contenido (JSON)
+          </label>
+          <textarea
+            rows={12}
+            className="w-full border rounded-lg px-3 py-2 font-mono focus:outline-none focus:ring-2 focus:ring-green-500"
+            value={editingContent}
+            onChange={(e) => setEditingContent(e.target.value)}
+          />
+          <button
+            onClick={handleUpdateContent}
+            className="mt-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
+          >
+            Actualizar contenido
+          </button>
+        </div>
+
+        {/* Vista previa */}
+        <div>
+          <h4 className="text-lg font-semibold mb-2">
+            Vista previa del contenido
+          </h4>
+          <pre className="bg-gray-100 p-4 rounded-lg overflow-auto text-sm">
+            {JSON.stringify(diagram.content, null, 2)}
+          </pre>
+        </div>
+
+        {/* Eliminar */}
+        <button
+          onClick={handleDelete}
+          className="w-full bg-red-600 text-white py-2 rounded-lg hover:bg-red-700 transition"
+        >
+          Eliminar diagrama
         </button>
       </div>
-
-      {/* Editor de contenido */}
-      <div style={{ marginBottom: "1rem" }}>
-        <h3>Contenido</h3>
-        <textarea
-          rows={15}
-          style={{ width: "100%", fontFamily: "monospace", padding: "0.5rem" }}
-          value={editingContent}
-          onChange={(e) => setEditingContent(e.target.value)}
-        />
-        <button onClick={handleUpdateContent} style={{ marginTop: "0.5rem" }}>
-          Actualizar contenido
-        </button>
-      </div>
-
-      {/* Mostrar contenido en pre */}
-      <div>
-        <h4>Vista previa del contenido:</h4>
-        <pre style={{ background: "#f5f5f5", padding: "1rem", borderRadius: 6 }}>
-          {JSON.stringify(diagram.content, null, 2)}
-        </pre>
-      </div>
-
-      {/* Botón de eliminar */}
-      <button
-        onClick={handleDelete}
-        style={{ marginTop: "1rem", background: "red", color: "#fff", padding: "0.5rem 1rem" }}
-      >
-        Eliminar diagrama
-      </button>
     </div>
   );
 };
 
 export default DiagramDetailPage;
+

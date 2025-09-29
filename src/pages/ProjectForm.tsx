@@ -1,4 +1,4 @@
-// src/pages/ProjectForm.tsx
+//src/pages/ProjectForm.tsx
 import React, { useEffect, useState } from "react";
 import { createProject, getProject, updateProject } from "../api/projects";
 import { useNavigate, useParams } from "react-router-dom";
@@ -10,7 +10,11 @@ const ProjectForm: React.FC = () => {
   const navigate = useNavigate();
   const { logout } = useAuth();
 
-  const [form, setForm] = useState({ name: "", description: "", start_date: "" });
+  const [form, setForm] = useState({
+    name: "",
+    description: "",
+    start_date: "",
+  });
   const [loading, setLoading] = useState(isEdit);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -43,12 +47,16 @@ const ProjectForm: React.FC = () => {
       }
     };
     fetch();
-    return () => { mounted = false; };
+    return () => {
+      mounted = false;
+    };
   }, [id, isEdit, logout, navigate]);
 
-  const handleChange = (k: string) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setForm((s) => ({ ...s, [k]: e.target.value }));
-  };
+  const handleChange =
+    (k: string) =>
+    (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      setForm((s) => ({ ...s, [k]: e.target.value }));
+    };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -72,42 +80,94 @@ const ProjectForm: React.FC = () => {
       }
     } catch (err: any) {
       console.error("Save project error:", err);
-      setError(err?.response?.data ? JSON.stringify(err.response.data) : "Error guardando proyecto");
+      setError(
+        err?.response?.data
+          ? JSON.stringify(err.response.data)
+          : "Error guardando proyecto"
+      );
     } finally {
       setSaving(false);
     }
   };
 
-  if (loading) return <p>Cargando...</p>;
+  if (loading)
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <p className="text-gray-600">Cargando...</p>
+      </div>
+    );
 
   return (
-    <div style={{ padding: 16, maxWidth: 720 }}>
-      <h2>{isEdit ? "Editar proyecto" : "Crear proyecto"}</h2>
-      {error && <div style={{ color: "red" }}>{error}</div>}
-      <form onSubmit={handleSubmit}>
-        <div style={{ marginBottom: 8 }}>
-          <label>Nombre</label><br />
-          <input value={form.name} onChange={handleChange("name")} required />
-        </div>
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
+      <div className="w-full max-w-lg bg-white rounded-lg shadow-md p-8">
+        <h2 className="text-2xl font-bold mb-6">
+          {isEdit ? "Editar proyecto" : "Crear proyecto"}
+        </h2>
 
-        <div style={{ marginBottom: 8 }}>
-          <label>Descripción</label><br />
-          <textarea value={form.description} onChange={handleChange("description")} rows={4} />
-        </div>
+        {error && <div className="text-red-600 mb-4">{error}</div>}
 
-        <div style={{ marginBottom: 8 }}>
-          <label>Start date</label><br />
-          <input type="date" value={form.start_date} onChange={handleChange("start_date")} />
-        </div>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Nombre */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Nombre
+            </label>
+            <input
+              value={form.name}
+              onChange={handleChange("name")}
+              required
+              className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"
+            />
+          </div>
 
-        <div style={{ marginTop: 12 }}>
-          <button type="submit" disabled={saving}>{saving ? "Guardando..." : "Guardar"}</button>
-          <button type="button" onClick={() => navigate("/projects")} style={{ marginLeft: 8 }}>Cancelar</button>
-        </div>
-      </form>
+          {/* Descripción */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Descripción
+            </label>
+            <textarea
+              value={form.description}
+              onChange={handleChange("description")}
+              rows={4}
+              className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"
+            />
+          </div>
+
+          {/* Fecha inicio */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Fecha de inicio
+            </label>
+            <input
+              type="date"
+              value={form.start_date}
+              onChange={handleChange("start_date")}
+              className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"
+            />
+          </div>
+
+          {/* Botones */}
+          <div className="flex gap-3 pt-4">
+            <button
+              type="submit"
+              disabled={saving}
+              className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition disabled:opacity-50"
+            >
+              {saving ? "Guardando..." : "Guardar"}
+            </button>
+            <button
+              type="button"
+              onClick={() => navigate("/projects")}
+              className="px-4 py-2 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400 transition"
+            >
+              Cancelar
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 };
 
 export default ProjectForm;
-// Fin src/pages/ProjectForm.tsx
+
