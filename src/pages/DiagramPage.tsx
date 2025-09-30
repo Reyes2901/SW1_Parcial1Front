@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Diagram, getDiagrams, deleteDiagram } from "../api/diagrams";
+import { Diagram, listDiagramsByProject, deleteDiagram } from "../api/diagrams";
 import { Link } from "react-router-dom";
 
 const DiagramsPage: React.FC = () => {
@@ -8,8 +8,8 @@ const DiagramsPage: React.FC = () => {
 
   const loadDiagrams = async () => {
     try {
-      const data = await getDiagrams();
-      setDiagrams(data);
+      //const data = await ge;
+     // setDiagrams(data);
     } catch {
       setError("No se pudieron cargar los diagramas.");
     }
@@ -47,3 +47,4 @@ const DiagramsPage: React.FC = () => {
 
 export default DiagramsPage;
 
+//correo medio dia lunes: mafir77459@mv6a.com contra: 13784954_Abby
